@@ -20,7 +20,7 @@
 			<CardCover v-if="showCardCover" :card-id="card.id" />
 			<div class="card-upper">
 				<h4 v-if="!editingTitle" dir="auto">
-					<span class="dragDisabled">{{ card.title }}</span>
+					<span v-auto-link class="dragDisabled">{{ card.title }}</span>
 				</h4>
 				<h4 v-else
 					dir="auto"
@@ -89,6 +89,14 @@ export default {
 	components: { CardBadges, AttachmentDragAndDrop, CardMenu, CardCover, DueDate },
 	directives: {
 		ClickOutside,
+		'auto-link': {
+			inserted(el) {
+				el.innerHTML = el.innerHTML.replace(
+					/(\s|\n|^)((https?:\/\/)([-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*))(\s|\n|$)/gi,
+					'$1<a href="$2" target="_blank">$2</a>$5',
+				)
+			},
+		},
 	},
 	mixins: [Color, labelStyle],
 	props: {
@@ -207,7 +215,10 @@ export default {
 			card = this.$refs[`card${card}`]
 			card.focus()
 		},
-		openCard() {
+		openCard(event) {
+			if (event.target.tagName.toLowerCase() === 'a') {
+				return
+			}
 			if (this.dragging || this.hasSelection()) {
 			  return
 			}
@@ -351,6 +362,11 @@ export default {
 				word-wrap: break-word;
 				padding-left: 4px;
 				align-self: center;
+
+				:deep(a) {
+					text-decoration: underline;
+				}
+
 				&.editable {
 					span {
 						cursor: text;
