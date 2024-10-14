@@ -12,7 +12,7 @@ The export currently has some kown limitations in terms of specific data not inc
 - Comments
 -
 ```
-occ deck:export > my-file.json
+occ deck:export username > my-file.json
 ```
 
 ## Import boards
